@@ -8,7 +8,7 @@ import json
 
 CREDS = get_creds()
 G_CLIENT = gspread.authorize(CREDS)
-MASTER_SHEET = "https://docs.google.com/spreadsheets/d/1TfZ1x1-r1PYMsFFlx4KEc_8eFt-slKh168vFIsp_5vE/edit#gid=0"
+MASTER_SHEET = "https://docs.google.com/spreadsheets/d/1I-qSO4iNGuQO8_6nWiWZpOO3_pW3dZ3g9iFwIbq4bms/edit#gid=0"
 
 
 
