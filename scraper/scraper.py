@@ -47,7 +47,18 @@ class Scraper(webdriver.Remote):
         return data
         # self.quit()
 
+    def bring_to_front(self):
+        try:
+            self.minimize_window()
+        except:
+            pass
+        try:
+            self.maximize_window()
+        except:
+            pass
+
     def get_json(self):
+        self.bring_to_front()
         data = "{}"
         for i in range(3):
             try:

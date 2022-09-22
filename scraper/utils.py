@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 
 
 def solve_captch(driver, attempts=3):
+    
     for i in range(0, attempts):
         print(f"Trying to solve captcha, attempt {i+1}")
         try:
@@ -21,6 +22,14 @@ def solve_captch(driver, attempts=3):
                 print("Captcha solved")
                 return True
         except Exception as e:
+            try:
+                driver.minimize_window()
+            except:
+                pass
+            try:
+                driver.maximize_window()
+            except:
+                pass
             continue
 
     print("Captcha not solved.")

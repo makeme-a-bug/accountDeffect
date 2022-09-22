@@ -73,11 +73,15 @@ def update_sheet(profile_name , data):
         print(f"sheet not found")
         return
 
-    json_data = json.loads(data)
-    if json_data.get("defects",None):
-        json_data = pd.DataFrame([flatten_json(x) for x in json_data['defects']])
-        json_data.to_csv(f"./json_csv/{profile_name}_json.csv")
-    
+    try:
+        json_data = json.loads(data)
+        if json_data.get("defects",None):
+            json_data = pd.DataFrame([flatten_json(x) for x in json_data['defects']])
+            json_data.to_csv(f"./json_csv/{profile_name}_json.csv")
+    except Exception as e:
+        print("could not create csv for :", profile_name)
+        print(e)
+        
     table = sheet.get_values()
     table = pd.DataFrame(table[1:],columns=['Account Name',"JSON"]+[f"JSON{i-1}" for i in range(3,len(table[0])+1)])
     profiles = table['Account Name'].to_list()
