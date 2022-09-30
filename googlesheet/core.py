@@ -44,15 +44,17 @@ def get_input_sheet_values() -> List[List]:
         sheet = spread_sheet.get_worksheet(0)
         # Call the Sheets API
         profiles = sheet.col_values(1)[1:]
+        sheets = sheet.col_values(2)[1:]
+        data = list(zip(profiles,sheets))
         # table = pd.DataFrame(sheet.get_all_records())
         # profiles = table['Account Name'].to_list()
 
         
-        if len(profiles) < 1:
+        if len(data) < 1:
             print('No data found.')
             return []
 
-        result = list(filter(lambda x: len(x) > 1 ,profiles))
+        result = list(filter(lambda x: len(x[0]) > 1 and x[1].startswith("https")  ,data))
         return result 
 
     except Exception as e:
@@ -61,11 +63,11 @@ def get_input_sheet_values() -> List[List]:
         return []
 
 
-def update_sheet(profile_name , data):
+def update_sheet(sheet_link , data):
     try:
-        spread_sheet = G_CLIENT.open_by_url(MASTER_SHEET)
+        spread_sheet = G_CLIENT.open_by_url(sheet_link)
     except:
-        print(f"main working sheet not found: {MASTER_SHEET}",)
+        print(f"main working sheet not found: {sheet_link}",)
     
     try:
         sheet = spread_sheet.get_worksheet(0)
@@ -76,31 +78,14 @@ def update_sheet(profile_name , data):
     try:
         json_data = json.loads(data)
         if json_data.get("defects",None):
-            json_data = pd.DataFrame([flatten_json(x) for x in json_data['defects']])
-            json_data.to_csv(f"./json_csv/{profile_name}_json.csv")
+            json_data = pd.DataFrame([flatten_json(x) for x in json_data['defects']]).fillna('').astype(str)
+            sheet.update([json_data.columns.values.tolist()] + json_data.values.tolist())
+
     except Exception as e:
-        print("could not create csv for :", profile_name)
+        print("")
         print(e)
         
-    table = sheet.get_values()
-    table = pd.DataFrame(table[1:],columns=['Account Name',"JSON"]+[f"JSON{i-1}" for i in range(3,len(table[0])+1)])
-    profiles = table['Account Name'].to_list()
-    index = profiles.index(profile_name) + 2
-    col = 2
-    batch = 1
-    for i in range(2,len(table.columns)+2):
-        sheet.update_cell(index, i, "")
-        time.sleep(1)
-
-    for i in range(0,len(data),50000):
-        print(i,batch*50000)
-        print(len(data[i:batch*50000]))
-        sheet.update_cell(index, col, data[i:batch*50000])
-        col += 1
-        batch +=1
-        time.sleep(1)
-    time.sleep(5)
-    print(col)
+    
 
 
         

@@ -83,7 +83,7 @@ class Manager:
         return json.get('value',None)
 
     def gather_data(self):
-        for profile_name in self.inputs:
+        for profile_name , sheet_link in self.inputs:
             self.console.log(f"Working on {profile_name}",style="blue")
             profile_uuid = None
             for i in range(2):
@@ -100,7 +100,7 @@ class Manager:
             if mla_url:
                 with Scraper(profile_name , profile_uuid , self.link , mla_url,destroy_browser=True) as scraper:
                     data = scraper.get_data()
-                update_sheet(profile_name,data)
+                update_sheet(sheet_link,data)
             self.console.log(f"{profile_name} done",style="blue")
             time.sleep(10)
             

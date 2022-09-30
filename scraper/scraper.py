@@ -118,7 +118,7 @@ class Scraper(webdriver.Remote):
         False : if the profile is not logged in
         """
         time.sleep(10)
-        if "By continuing, you agree to Amazon's" not in self.page_source:
+        if "By continuing, you agree to Amazon's" not in self.page_source and "Keep me signed in" not in self.page_source:
             return True
         self.console.log(f"{self.profile_name}:Profile not logged in into Amazon account",style='red')
         return False
